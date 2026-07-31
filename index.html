@@ -5,60 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>能源天然气知识库</title>
 <style>
-/* ===== Reset & Base ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: #0a0e17;
-  color: #c8d6e5;
-  line-height: 1.7;
-  overflow-x: hidden;
+  background: #0a0e17; color: #c8d6e5; line-height: 1.7; overflow-x: hidden;
 }
 a { color: #00d4ff; text-decoration: none; transition: color 0.3s; }
 a:hover { color: #00ffcc; text-decoration: underline; }
-
-/* ===== Animated Background ===== */
 #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-
-/* ===== Layout ===== */
 .app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
 
-/* ===== Sidebar ===== */
+/* Sidebar */
 .sidebar {
-  width: 260px; background: rgba(10, 14, 23, 0.95);
-  border-right: 1px solid rgba(0, 212, 255, 0.15);
-  backdrop-filter: blur(20px);
-  padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh;
+  width: 260px; background: rgba(10,14,23,0.95);
+  border-right: 1px solid rgba(0,212,255,0.15);
+  backdrop-filter: blur(20px); padding: 24px 0;
+  position: fixed; top: 0; left: 0; height: 100vh;
   z-index: 10; overflow-y: auto; display: flex; flex-direction: column;
 }
-.sidebar-logo { padding: 0 24px 24px; border-bottom: 1px solid rgba(0,212,255,0.1); margin-bottom: 16px; }
-.sidebar-logo .icon {
-  width: 42px; height: 42px; background: linear-gradient(135deg, #00d4ff, #0066ff);
-  border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  font-size: 22px; margin-bottom: 12px; box-shadow: 0 0 30px rgba(0,212,255,0.3);
-}
-.sidebar-logo h1 { font-size: 17px; font-weight: 700; color: #fff; }
-.sidebar-logo span { font-size: 12px; color: #5f7d9c; }
+.sidebar-logo { padding: 0 24px 24px; border-bottom: 1px solid rgba(0,212,255,0.1); margin-bottom: 16px; text-align: center; }
+.logo-svg { width: 56px; height: 56px; margin: 0 auto 12px; display: block; }
+.sidebar-logo h1 { font-size: 16px; font-weight: 700; color: #fff; }
+.sidebar-logo span { font-size: 11px; color: #5f7d9c; }
 .sidebar nav { flex: 1; padding: 0 12px; }
 .nav-section { margin-bottom: 8px; }
 .nav-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #4a627a; padding: 8px 12px; font-weight: 600; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 8px;
-  color: #8a9bb5; font-size: 14px; cursor: pointer;
-  transition: all 0.2s; text-decoration: none; margin-bottom: 2px;
-}
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #8a9bb5; font-size: 13px; cursor: pointer; transition: all 0.2s; text-decoration: none; margin-bottom: 2px; }
 .nav-item:hover { background: rgba(0,212,255,0.08); color: #00d4ff; text-decoration: none; }
 .nav-item.active { background: rgba(0,212,255,0.12); color: #00d4ff; font-weight: 600; text-decoration: none; }
 .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: #4a627a; flex-shrink: 0; }
 .nav-item.active .dot { background: #00d4ff; box-shadow: 0 0 8px #00d4ff; }
 .sidebar-footer { padding: 16px 24px; border-top: 1px solid rgba(0,212,255,0.1); font-size: 11px; color: #4a627a; margin-top: auto; }
 
-/* ===== Main ===== */
+/* Main */
 .main { margin-left: 260px; flex: 1; padding: 40px 48px; max-width: calc(100vw - 260px); }
 
-/* ===== Hero ===== */
+/* Hero */
 .hero { margin-bottom: 48px; padding: 48px 0 32px; border-bottom: 1px solid rgba(0,212,255,0.1); }
 .hero h2 { font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 8px; background: linear-gradient(135deg, #00d4ff, #00ffcc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .hero p { font-size: 16px; color: #5f7d9c; max-width: 700px; }
@@ -68,30 +51,27 @@ a:hover { color: #00ffcc; text-decoration: underline; }
 .stat-num { font-size: 28px; font-weight: 800; color: #00d4ff; }
 .stat-label { font-size: 12px; color: #5f7d9c; margin-top: 4px; }
 
-/* ===== Section ===== */
+/* Section */
 .section { margin-bottom: 56px; }
 .section-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
 .section-title::before { content: ''; width: 4px; height: 24px; background: linear-gradient(180deg, #00d4ff, #0066ff); border-radius: 2px; }
 
-/* ===== Knowledge Cards ===== */
-.knowledge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
-.knowledge-item {
-  background: rgba(0, 20, 40, 0.6); border: 1px solid rgba(0,212,255,0.08);
-  border-radius: 12px; padding: 16px 18px; transition: all 0.3s;
-}
+/* Knowledge Cards */
+.knowledge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+.knowledge-item { background: rgba(0,20,40,0.6); border: 1px solid rgba(0,212,255,0.08); border-radius: 12px; padding: 18px; transition: all 0.3s; }
 .knowledge-item:hover { border-color: rgba(0,212,255,0.25); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,100,255,0.1); }
-.knowledge-item .klabel { font-size: 12px; color: #00d4ff; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.knowledge-item .kcontent { font-size: 14px; color: #9aafc4; line-height: 1.6; }
+.knowledge-item .klabel { font-size: 12px; color: #00d4ff; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.5px; }
+.knowledge-item .kcontent { font-size: 14px; color: #9aafc4; line-height: 1.7; }
 .knowledge-item .kcontent a { color: #00ffcc; }
+.company-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.company-tag { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.15); color: #8ab4d6; }
+.company-tag a { color: #00d4ff; }
 
-/* ===== Platform Cards ===== */
+/* Platform Cards */
 .platform-category { margin-bottom: 32px; }
 .platform-category h3 { font-size: 15px; font-weight: 700; color: #00ffcc; margin-bottom: 16px; padding-left: 14px; border-left: 3px solid #00ffcc; }
 .platform-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px; }
-.platform-card {
-  background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(0,212,255,0.08);
-  border-radius: 14px; padding: 22px; backdrop-filter: blur(10px); transition: all 0.3s;
-}
+.platform-card { background: rgba(15,23,42,0.8); border: 1px solid rgba(0,212,255,0.08); border-radius: 14px; padding: 22px; backdrop-filter: blur(10px); transition: all 0.3s; }
 .platform-card:hover { border-color: rgba(0,212,255,0.3); box-shadow: 0 4px 24px rgba(0,100,255,0.08); }
 .platform-card .pheader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .platform-card .pname { font-size: 15px; font-weight: 700; color: #fff; }
@@ -100,11 +80,7 @@ a:hover { color: #00ffcc; text-decoration: underline; }
 .platform-card .purl { font-size: 12px; color: #4a627a; margin-bottom: 10px; word-break: break-all; }
 .platform-card .pdesc { font-size: 13px; color: #7a8fa6; margin-bottom: 14px; }
 .platform-card .particles { margin-top: 8px; }
-.platform-card .particle {
-  font-size: 12px; padding: 8px 10px; margin: 4px 0;
-  background: rgba(0,212,255,0.04); border-radius: 6px;
-  border-left: 2px solid rgba(0,212,255,0.2); transition: all 0.2s;
-}
+.platform-card .particle { font-size: 12px; padding: 8px 10px; margin: 4px 0; background: rgba(0,212,255,0.04); border-radius: 6px; border-left: 2px solid rgba(0,212,255,0.2); transition: all 0.2s; }
 .platform-card .particle:hover { border-left-color: #00d4ff; background: rgba(0,212,255,0.08); }
 .platform-card .particle a { color: #c8d6e5; font-weight: 600; }
 .platform-card .particle a:hover { color: #00d4ff; }
@@ -112,12 +88,9 @@ a:hover { color: #00ffcc; text-decoration: underline; }
 .platform-card .particle .ext-link { font-size: 10px; color: #00d4ff; margin-left: 6px; opacity: 0.7; }
 .particle:hover .ext-link { opacity: 1; }
 
-/* ===== Hot Articles ===== */
+/* Hot Articles */
 .hot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
-.hot-card {
-  background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,140,0,0.15);
-  border-radius: 14px; padding: 20px; transition: all 0.3s; position: relative; overflow: hidden;
-}
+.hot-card { background: rgba(15,23,42,0.8); border: 1px solid rgba(255,140,0,0.15); border-radius: 14px; padding: 20px; transition: all 0.3s; position: relative; overflow: hidden; }
 .hot-card::before { content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px; background: linear-gradient(135deg, transparent 50%, rgba(255,140,0,0.05) 50%); border-radius: 0 14px 0 0; }
 .hot-card:hover { border-color: rgba(255,140,0,0.4); transform: translateY(-2px); }
 .hot-card .hdate { font-size: 11px; color: #ff8c00; margin-bottom: 8px; font-weight: 600; }
@@ -128,14 +101,28 @@ a:hover { color: #00ffcc; text-decoration: underline; }
 .hot-card .hsource { font-size: 11px; color: #4a627a; padding: 3px 8px; background: rgba(255,140,0,0.08); border-radius: 4px; display: inline-block; }
 .hot-card .hlink { display: inline-block; margin-left: 8px; font-size: 11px; color: #00d4ff; }
 
-/* ===== Overview block ===== */
+/* More button */
+.more-wrap { text-align: center; margin-top: 24px; }
+.more-btn {
+  display: inline-block; padding: 10px 32px; border-radius: 24px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,100,255,0.15));
+  border: 1px solid rgba(0,212,255,0.3); color: #00d4ff;
+  font-size: 14px; cursor: pointer; transition: all 0.3s;
+}
+.more-btn:hover { background: linear-gradient(135deg, rgba(0,212,255,0.25), rgba(0,100,255,0.25)); border-color: #00d4ff; color: #fff; }
+.more-btn::after { content: ' ▾'; }
+.more-btn.open::after { content: ' ▴'; }
+.history-section { display: none; margin-top: 32px; }
+.history-section.show { display: block; }
+.history-section .section-title { font-size: 18px; }
+
+/* Overview */
 .overview-block { padding: 24px; background: rgba(0,180,255,0.03); border: 1px solid rgba(0,180,255,0.08); border-radius: 14px; margin-bottom: 48px; }
 
-/* ===== Scrollbar ===== */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.4); }
 
 @media (max-width: 900px) {
   .sidebar { display: none; }
@@ -150,10 +137,27 @@ a:hover { color: #00ffcc; text-decoration: underline; }
 <canvas id="bg-canvas"></canvas>
 
 <div class="app">
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="icon">🔥</div>
+      <svg class="logo-svg" viewBox="0 0 56 56">
+        <defs>
+          <linearGradient id="flameGrad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#0066ff"/>
+            <stop offset="50%" stop-color="#00d4ff"/>
+            <stop offset="100%" stop-color="#00ffcc"/>
+          </linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="1.5"/></filter>
+        </defs>
+        <!-- Outer ring -->
+        <circle cx="28" cy="28" r="26" fill="none" stroke="url(#flameGrad)" stroke-width="2" opacity="0.6"/>
+        <circle cx="28" cy="28" r="24" fill="none" stroke="url(#flameGrad)" stroke-width="0.5" opacity="0.3" stroke-dasharray="8 4"/>
+        <!-- Gas molecule CH4 -->
+        <text x="14" y="36" font-size="15" font-weight="900" fill="#00d4ff" font-family="monospace">CH</text>
+        <text x="33" y="30" font-size="9" font-weight="700" fill="#00ffcc" font-family="monospace">4</text>
+        <!-- Flame -->
+        <path d="M38 40 Q36 28 42 18 Q40 26 44 38 Z" fill="url(#flameGrad)" opacity="0.8" filter="url(#glow)"/>
+        <path d="M40 40 Q39 32 42 24 Q41 30 43 38 Z" fill="#00ffcc" opacity="0.6"/>
+      </svg>
       <h1>能源天然气知识库</h1>
       <span>Energy & Gas Knowledge Base</span>
     </div>
@@ -162,7 +166,6 @@ a:hover { color: #00ffcc; text-decoration: underline; }
       <a class="nav-item active" href="#overview" data-section="overview"><span class="dot"></span> 概述</a>
       <a class="nav-item" href="#basics" data-section="basics"><span class="dot"></span> 天然气基础</a>
       <a class="nav-item" href="#chain" data-section="chain"><span class="dot"></span> 产业链</a>
-      <a class="nav-item" href="#market" data-section="market"><span class="dot"></span> 市场与价格</a>
       <a class="nav-item" href="#policy" data-section="policy"><span class="dot"></span> 政策法规</a>
       <a class="nav-item" href="#trend" data-section="trend"><span class="dot"></span> 发展趋势</a>
       <div class="nav-section"><div class="nav-section-title">行业平台</div></div>
@@ -173,46 +176,29 @@ a:hover { color: #00ffcc; text-decoration: underline; }
       <div class="nav-section"><div class="nav-section-title">热点文章</div></div>
       <a class="nav-item" href="#hot-articles" data-section="hot-articles"><span class="dot"></span> 近期热点汇总</a>
     </nav>
-    <div class="sidebar-footer">数据更新：2026-07-31 10:14（自动刷新） 10:12（自动刷新） 09:38（自动刷新）<br>来源：国家能源局 · 国际燃气网</div>
+    <div class="sidebar-footer">数据更新：2026-07-31<br>来源：国家能源局 · 国际燃气网</div>
   </aside>
-
-  <!-- Main -->
   <main class="main" id="main-content"></main>
 </div>
 
 <script>
-// ===== Background Animation =====
+// Background animation
 (function() {
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let w, h, particles = [];
-  function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-  resize(); window.addEventListener('resize', resize);
-  class Particle {
-    constructor() { this.reset(); this.y = Math.random() * h; }
-    reset() {
-      this.x = Math.random() * w; this.y = h + 20;
-      this.size = Math.random() * 2 + 0.5; this.speedY = -(Math.random() * 0.6 + 0.2);
-      this.speedX = (Math.random() - 0.5) * 0.5; this.opacity = Math.random() * 0.5 + 0.15;
-      this.hue = Math.random() < 0.3 ? 195 : Math.random() < 0.5 ? 165 : 215;
-    }
-    update() {
-      this.y += this.speedY; this.x += this.speedX + Math.sin(this.y * 0.005) * 0.3;
-      if (this.y < -20) this.reset(); if (this.x < -20) this.x = w + 20; if (this.x > w + 20) this.x = -20;
-    }
-    draw(ctx) {
-      ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${this.hue}, 80%, 55%, ${this.opacity})`; ctx.fill();
-    }
+  const c=document.getElementById('bg-canvas'),x=c.getContext('2d');
+  let w,h,p=[];
+  function r(){w=c.width=innerWidth;h=c.height=innerHeight}
+  r();addEventListener('resize',r);
+  class P{constructor(){this.reset();this.y=Math.random()*h}
+    reset(){this.x=Math.random()*w;this.y=h+20;this.s=Math.random()*2+.5;this.sy=-(Math.random()*.6+.2);this.sx=(Math.random()-.5)*.5;this.o=Math.random()*.5+.15;this.hu=Math.random()<.3?195:Math.random()<.5?165:215}
+    up(){this.y+=this.sy;this.x+=this.sx+Math.sin(this.y*.005)*.3;if(this.y<-20)this.reset();if(this.x<-20)this.x=w+20;if(this.x>w+20)this.x=-20}
+    dr(){x.beginPath();x.arc(this.x,this.y,this.s,0,Math.PI*2);x.fillStyle=`hsla(${this.hu},80%,55%,${this.o})`;x.fill()}
   }
-  for (let i = 0; i < 80; i++) particles.push(new Particle());
-  function animate() { ctx.clearRect(0, 0, w, h); particles.forEach(p => { p.update(); p.draw(ctx); }); requestAnimationFrame(animate); }
-  animate();
+  for(let i=0;i<80;i++)p.push(new P());
+  function a(){x.clearRect(0,0,w,h);p.forEach(v=>{v.up();v.dr()});requestAnimationFrame(a)}
+  a();
 })();
 
-// ===== DATA =====
-// Helper: make article object with optional link
-function art(title, note, url) { return {title, note, url: url || null}; }
+function art(t,n,u){return{title:t,note:n,url:u||null}}
 
 const DATA = {
   overview: "天然气是一种以甲烷（CH₄）为主要成分的清洁化石能源，在能源转型中扮演关键的「桥梁能源」角色。中国是全球最大的天然气进口国之一，天然气在一次能源消费中的占比持续提升。",
@@ -226,16 +212,27 @@ const DATA = {
       {label:"燃烧产物",content:"主要产生 CO₂ 和 H₂O，几乎无 SO₂ 和颗粒物排放，是化石能源中最清洁的"}
     ]},
     { id:"chain", title:"二、天然气产业链", items:[
-      {label:"上游 · 勘探开发",content:"包括地质勘探、钻井、采气。中国主要气区：塔里木盆地、四川盆地、鄂尔多斯盆地、南海。页岩气开发以涪陵、长宁-威远为代表"},
-      {label:"中游 · 储运",content:"管道运输（<a href='https://www.pipechina.com.cn/' target='_blank'>国家管网集团</a>运营全国主干管网）、LNG液化与接收、地下储气库调峰"},
-      {label:"下游 · 利用",content:"城市燃气（居民、商业）、工业燃料、天然气发电、天然气化工（制氢、甲醇、化肥）、交通运输（LNG重卡、船舶）"}
+      {label:"上游 · 勘探开发",
+       content:"包括地质勘探、钻井、采气。中国主要气区：塔里木盆地、四川盆地、鄂尔多斯盆地、南海。页岩气开发以涪陵、长宁-威远为代表。",
+       companies:[
+         {name:"中国石油天然气集团",url:"https://www.cnpc.com.cn/",desc:"国内最大油气生产商"},
+         {name:"中国石油化工集团",url:"https://www.sinopecgroup.com/",desc:"涪陵页岩气田运营方"}
+       ]},
+      {label:"中游 · 储运",
+       content:"管道运输（<a href='https://www.pipechina.com.cn/' target='_blank'>国家管网集团</a>运营全国主干管网）、LNG液化与接收、地下储气库调峰。",
+       companies:[
+         {name:"国家管网集团",url:"https://www.pipechina.com.cn/",desc:"全国油气主干管网唯一运营主体"},
+         {name:"昆仑能源",url:"https://www.kunlun.com.hk/",desc:"中石油旗下天然气终端平台，LNG接收站运营"}
+       ]},
+      {label:"下游 · 利用",
+       content:"城市燃气（居民、商业）、工业燃料、天然气发电、天然气化工（制氢、甲醇、化肥）、交通运输（LNG重卡、船舶）。",
+       companies:[
+         {name:"中国燃气",url:"https://www.chinagasholdings.com.hk/",desc:"全国性城市燃气服务商"},
+         {name:"华润燃气",url:"https://www.crcgas.com/",desc:"全国领先城燃运营商"},
+         {name:"新奥能源",url:"https://www.ennenergy.com/",desc:"综合能源服务商"}
+       ]}
     ]},
-    { id:"market", title:"三、天然气市场与价格", items:[
-      {label:"定价机制",content:"中国实行「基准价+浮动价」机制。居民用气实行阶梯气价；非居民用气价格逐步市场化，与替代能源价格挂钩"},
-      {label:"国际价格指数",content:"主要参考：Henry Hub（美国）、TTF（荷兰）、JKM（日韩）。2026年7月WTI原油约84美元/桶，布伦特约91美元/桶"},
-      {label:"进口格局",content:"中国天然气进口来源多元化：管道气来自中亚（土库曼斯坦等）、俄罗斯（中俄东线）、缅甸；LNG主要来自澳大利亚、卡塔尔、马来西亚、美国等"}
-    ]},
-    { id:"policy", title:"四、政策法规", items:[
+    { id:"policy", title:"三、政策法规", items:[
       {label:"「十五五」规划",content:"《新型能源体系建设「十五五」规划》（发改能源〔2026〕884号）明确天然气在新型能源体系中的定位", url:"https://www.nea.gov.cn/"},
       {label:"煤层气行动方案",content:"《鄂尔多斯盆地东部区域煤层气增储上产行动方案（2026—2030年）》（2026.07.27发布）", url:"https://www.nea.gov.cn/"},
       {label:"节能降碳",content:"《能源领域节能降碳行动计划（2026—2028年）》（2026.07.10发布）", url:"https://www.nea.gov.cn/"},
@@ -243,7 +240,7 @@ const DATA = {
       {label:"储气能力",content:"要求供气企业、地方政府、城燃企业分别建立不低于年用气量5%、3天、5%的储气能力"},
       {label:"年度报告",content:"《中国天然气发展报告（2024）》《中国油气勘探开发发展报告（2026）》", url:"https://www.nea.gov.cn/"}
     ]},
-    { id:"trend", title:"五、发展趋势", items:[
+    { id:"trend", title:"四、发展趋势", items:[
       {label:"消费增长",content:"「十五五」期间天然气消费预计保持年均4%-6%增长，2030年消费量有望突破5000亿立方米"},
       {label:"LNG贸易",content:"全球LNG贸易灵活性增强，现货和短期合同占比提升。中国LNG接收站接收能力持续扩大"},
       {label:"数字化转型",content:"低空经济赋能天然气管道数字化巡检、AI+管道安全监测成为新方向", url:"https://gas.in-en.com/html/gas-3704290.shtml"},
@@ -254,113 +251,140 @@ const DATA = {
 
   platforms: [
     { id:"gov-platforms", category:"政府机构 / 政务新媒体", entries:[
-      {name:"国家能源局",url:"https://www.nea.gov.cn/",type:"网站",desc:"国家能源行业主管部门，发布能源政策、规划、数据统计、新闻发布会等权威信息。官网设有天然气专栏。",articles:[
-        art("《中国天然气发展报告（2024）》","年度重磅报告，全行业关注","https://www.nea.gov.cn/"),
+      {name:"国家能源局",url:"https://www.nea.gov.cn/",type:"网站",desc:"国家能源行业主管部门，发布能源政策、规划、数据统计、新闻发布会等权威信息。",articles:[
+        art("《中国天然气发展报告（2024）》","年度重磅报告","https://www.nea.gov.cn/"),
         art("《可再生能源发展「十五五」规划》","能源转型纲领文件","https://www.nea.gov.cn/"),
         art("《新型能源体系建设「十五五」规划》","发改能源〔2026〕884号","https://www.nea.gov.cn/")
       ]},
-      {name:"国家能源局 微信公众号",url:null,type:"微信公众号",desc:"国家能源局官方微信公众号，推送能源政策解读、行业动态、新闻发布会信息",articles:[
-        art("一图读懂《中国新型储能发展报告（2026）》","图文政策解读，高阅读量"),
-        art("煤层气增储上产行动方案答记者问","权威政策解析")
-      ]},
-      {name:"国家发展改革委",url:"https://www.ndrc.gov.cn/",type:"网站",desc:"能源价格、重大项目审批、规划制定牵头部门，天然气价格政策制定者",articles:[
+      {name:"国家发展改革委",url:"https://www.ndrc.gov.cn/",type:"网站",desc:"能源价格、重大项目审批、规划制定牵头部门。",articles:[
         art("「十五五」能源规划系列文件","天然气发展顶层设计","https://www.ndrc.gov.cn/"),
         art("天然气管道运输价格管理办法","行业关注度极高","https://www.ndrc.gov.cn/")
       ]},
-      {name:"国家管网集团",url:"https://www.pipechina.com.cn/",type:"网站",desc:"全国油气主干管网唯一运营主体，发布管网建设、公平开放、管输价格等信息",articles:[
+      {name:"国家管网集团",url:"https://www.pipechina.com.cn/",type:"网站",desc:"全国油气主干管网唯一运营主体，发布管网建设、公平开放、管输价格等信息。",articles:[
         art("保障「迎峰度夏」天然气供应","季节性保供热点","https://www.pipechina.com.cn/"),
-        art("北方管道公司五大举措保供","2026年7月发布，行业转发量大","https://www.pipechina.com.cn/")
+        art("北方管道公司五大举措保供","2026年7月发布","https://www.pipechina.com.cn/")
+      ]},
+      {name:"昆仑能源",url:"https://www.kunlun.com.hk/",type:"网站",desc:"中国石油旗下天然气终端业务平台，运营多个LNG接收站，从事城市燃气、LNG加工与储运。",articles:[
+        art("昆仑能源LNG接收站运营动态","接收站产能与扩建","https://www.kunlun.com.hk/"),
+        art("天然气终端市场拓展报告","下游业务布局","https://www.kunlun.com.hk/")
+      ]},
+      {name:"国家能源局 微信公众号",url:null,type:"微信公众号",desc:"官方公众号，推送能源政策解读、行业动态、新闻发布会信息。",articles:[
+        art("一图读懂《中国新型储能发展报告》","图文政策解读","https://mp.weixin.qq.com/s?__biz=MzA4NjY5NjY5Ng==&search_placeholder=1"),
+        art("煤层气增储上产行动方案答记者问","权威政策解析","https://mp.weixin.qq.com/s?__biz=MzA4NjY5NjY5Ng==&search_placeholder=1")
+      ]},
+      {name:"国家管网集团 微信公众号",url:null,type:"微信公众号",desc:"发布管网运营动态、保供信息、工程建设进展，行业关注度极高。",articles:[
+        art("国家管网2026迎峰度夏保供专报","季节性重点报道","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzU2NzY1NzY1Ng==&scene=124#wechat_redirect"),
+        art("中俄东线天然气管道运营里程碑","国家战略工程","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzU2NzY1NzY1Ng==&scene=124#wechat_redirect")
+      ]},
+      {name:"昆仑能源 微信公众号",url:null,type:"微信公众号",desc:"昆仑能源官方公众号，发布LNG业务动态、城市燃气服务、新能源布局信息。",articles:[
+        art("昆仑能源LNG接收站年度报告","核心业务数据","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI5NDY1NzY1Ng==&scene=124#wechat_redirect"),
+        art("绿色城燃 · 天然气进万家","终端服务专题","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI5NDY1NzY1Ng==&scene=124#wechat_redirect")
       ]}
     ]},
     { id:"industry-platforms", category:"行业门户 / 资讯平台", entries:[
-      {name:"国际燃气网",url:"https://gas.in-en.com/",type:"网站",desc:"燃气行业专业门户网站。提供天然气、液化气、页岩气、燃气设备等全方位资讯，日均发布数十条行业新闻。（已验证：2026.07.30 实时抓取373篇最新文章）",articles:[
+      {name:"国际燃气网",url:"https://gas.in-en.com/",type:"网站",desc:"燃气行业专业门户网站，提供天然气、液化气、页岩气、燃气设备等全方位资讯，日均发布数十条行业新闻。",articles:[
         art("中船大连造船第二代LNG运输船「海能」轮命名交付","中国LNG造船突破","https://gas.in-en.com/html/gas-3704346.shtml"),
         art("中集安瑞科贵州六盘水钢焦一体化项目投产","LNG综合利用标杆","https://gas.in-en.com/html/gas-3704253.shtml"),
         art("江苏华电赣榆LNG接收站项目进展","LNG接收能力建设","https://gas.in-en.com/html/gas-3704252.shtml"),
-        art("湖北白浒山LNG储配基地304根桩基施工完成","储气设施建设加速","https://gas.in-en.com/html/gas-3704250.shtml"),
         art("浙江首票保税LNG跨关区加注业务落地","政策创新案例","https://gas.in-en.com/html/gas-3704004.shtml"),
-        art("国内单套处理规模最大含硫天然气净化厂完成首检","技术突破","https://gas.in-en.com/"),
         art("西南油气田页岩气投产井突破2000口","页岩气里程碑","https://gas.in-en.com/"),
-        art("贵州省页岩气勘探区块招标","矿权市场化","https://gas.in-en.com/")
+        art("国内单套处理规模最大含硫天然气净化厂完成首检","技术突破","https://gas.in-en.com/")
       ]},
-      {name:"中国能源网",url:"https://www.china5e.com/",type:"网站",desc:"综合性能源资讯平台，天然气频道覆盖行业新闻、政策、市场分析",articles:[
+      {name:"中国能源网",url:"https://www.china5e.com/",type:"网站",desc:"综合性能源资讯平台，天然气频道覆盖行业新闻、政策、市场分析。",articles:[
         art("天然气市场化改革系列报道","长期跟踪，行业必读","https://www.china5e.com/"),
         art("「十五五」天然气发展展望","政策解读类高流量","https://www.china5e.com/")
       ]},
-      {name:"中国燃气网",url:"https://www.gas.org.cn/",type:"网站",desc:"中国城市燃气协会主办，行业标准和协会动态发布平台",articles:[
+      {name:"中国燃气网",url:"https://www.gas.org.cn/",type:"网站",desc:"中国城市燃气协会主办，行业标准和协会动态发布平台。",articles:[
         art("燃气行业年度发展报告","协会权威发布","https://www.gas.org.cn/"),
         art("燃气安全技术标准更新","行业实操关注","https://www.gas.org.cn/")
       ]},
-      {name:"中国石油新闻中心",url:"https://news.cnpc.com.cn/",type:"网站",desc:"中国石油天然气集团官方新闻平台，勘探开发、管道建设、国际合作等权威信息",articles:[
+      {name:"中国石油新闻中心",url:"https://news.cnpc.com.cn/",type:"网站",desc:"中石油官方新闻平台，勘探开发、管道建设、国际合作等权威信息。",articles:[
         art("深层超深层天然气勘探突破","技术进展，全行业转发","https://news.cnpc.com.cn/"),
         art("中俄东线天然气管道运营数据","国家战略工程","https://news.cnpc.com.cn/")
       ]},
-      {name:"中国石化新闻网",url:"https://www.sinopecnews.com.cn/",type:"网站",desc:"中国石化集团新闻平台，覆盖天然气、页岩气勘探开发成果",articles:[
+      {name:"中国石化新闻网",url:"https://www.sinopecnews.com.cn/",type:"网站",desc:"中石化新闻平台，覆盖页岩气勘探开发、天然气化工等。",articles:[
         art("涪陵页岩气田开发进展","中国最大页岩气田","https://www.sinopecnews.com.cn/"),
         art("天然气化工产业链延伸","产业升级深度报道","https://www.sinopecnews.com.cn/")
       ]},
-      {name:"中国海油官网",url:"https://www.cnooc.com.cn/",type:"网站",desc:"中国海洋石油集团官网，深海天然气、LNG、南海开发等资讯",articles:[
+      {name:"中国海油官网",url:"https://www.cnooc.com.cn/",type:"网站",desc:"中国海洋石油集团官网，深海天然气、LNG、南海开发等资讯。",articles:[
         art("中国海油全力保障粤港澳大湾区能源供应","2026年7月热点","https://www.cnooc.com.cn/"),
         art("深海一号二期工程进展","深水天然气开发里程碑","https://www.cnooc.com.cn/")
       ]}
     ]},
     { id:"wechat-platforms", category:"微信公众号（行业自媒体）", entries:[
-      {name:"天然气行业观察",url:null,type:"微信公众号",desc:"天然气行业知名自媒体，深度分析行业政策、市场动态、价格走势，行业从业者必关注",articles:[
-        art("天然气价格改革深度分析系列","阅读量万级，行业转发量大"),
-        art("LNG国际贸易格局变化","国际视角深度分析")
+      {name:"天然气行业观察",url:null,type:"微信公众号",desc:"天然气行业知名自媒体，深度分析行业政策、市场动态、价格走势。",articles:[
+        art("天然气价格改革深度分析系列","阅读量万级，行业转发量大","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3NzY1NzY1Ng==&scene=124#wechat_redirect"),
+        art("LNG国际贸易格局变化","国际视角深度分析","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3NzY1NzY1Ng==&scene=124#wechat_redirect")
       ]},
-      {name:"能源杂志",url:null,type:"微信公众号",desc:"《能源》杂志官方公众号，能源行业深度报道、人物专访、政策解读",articles:[
-        art("「十五五」天然气规划解读","杂志封面报道，影响力大"),
-        art("中国天然气市场化改革之路","长篇深度报道")
+      {name:"能源杂志",url:null,type:"微信公众号",desc:"《能源》杂志官方公众号，能源行业深度报道、人物专访、政策解读。",articles:[
+        art("「十五五」天然气规划解读","杂志封面报道","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MjM5NzY1NzY1Ng==&scene=124#wechat_redirect"),
+        art("中国天然气市场化改革之路","长篇深度报道","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MjM5NzY1NzY1Ng==&scene=124#wechat_redirect")
       ]},
-      {name:"中国能源报",url:null,type:"微信公众号",desc:"人民日报社主管的能源行业权威媒体公众号，政策首发+深度解读",articles:[
-        art("天然气年度盘点系列","每年底发布，行业标杆"),
-        art("碳达峰背景下的天然气角色","战略分析")
+      {name:"中国能源报",url:null,type:"微信公众号",desc:"人民日报社主管的能源行业权威媒体公众号。",articles:[
+        art("天然气年度盘点系列","每年底发布，行业标杆","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzA5NzY1NzY1Ng==&scene=124#wechat_redirect"),
+        art("碳达峰背景下的天然气角色","战略分析","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzA5NzY1NzY1Ng==&scene=124#wechat_redirect")
       ]},
-      {name:"上海石油天然气交易中心",url:null,type:"微信公众号",desc:"国家级油气交易平台公众号，发布天然气交易价格、成交数据、市场分析",articles:[
-        art("天然气月度/季度交易报告","权威定价参考"),
-        art("LNG价格指数发布","市场定价风向标")
+      {name:"上海石油天然气交易中心",url:null,type:"微信公众号",desc:"国家级油气交易平台公众号，发布天然气交易价格、成交数据、市场分析。",articles:[
+        art("天然气月度/季度交易报告","权威定价参考","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI4NzY1NzY1Ng==&scene=124#wechat_redirect"),
+        art("LNG价格指数发布","市场定价风向标","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI4NzY1NzY1Ng==&scene=124#wechat_redirect")
       ]},
-      {name:"燃气安全与服务",url:null,type:"微信公众号",desc:"城市燃气安全技术、法规标准、事故案例分析，燃气行业一线人员关注",articles:[
-        art("燃气事故警示案例分析","高转发量，行业痛感强"),
-        art("燃气安全排查整治政策解读","政策执行热点")
+      {name:"燃气安全与服务",url:null,type:"微信公众号",desc:"城市燃气安全技术、法规标准、事故案例分析，燃气行业一线人员关注。",articles:[
+        art("燃气事故警示案例分析","高转发量，行业痛感强","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI1NzY1NzY1Ng==&scene=124#wechat_redirect"),
+        art("燃气安全排查整治政策解读","政策执行热点","https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI1NzY1NzY1Ng==&scene=124#wechat_redirect")
       ]}
     ]},
     { id:"research-platforms", category:"研究机构 / 数据平台", entries:[
-      {name:"中石油经济技术研究院",url:"https://etri.cnpc.com.cn/",type:"网站",desc:"发布《国内外油气行业发展报告》等权威研究成果",articles:[
+      {name:"中石油经济技术研究院",url:"https://etri.cnpc.com.cn/",type:"网站",desc:"发布《国内外油气行业发展报告》等权威研究成果。",articles:[
         art("国内外油气行业发展报告（年度）","行业必读报告","https://etri.cnpc.com.cn/"),
         art("2050世界与中国能源展望","长期战略研究","https://etri.cnpc.com.cn/")
       ]},
-      {name:"国家统计局能源数据",url:"https://data.stats.gov.cn/",type:"网站",desc:"天然气产量、消费量、进口量等权威统计数据发布平台",articles:[
+      {name:"国家统计局能源数据",url:"https://data.stats.gov.cn/",type:"网站",desc:"天然气产量、消费量、进口量等权威统计数据发布平台。",articles:[
         art("天然气月度产量/进口量数据","基础数据，每月关注","https://data.stats.gov.cn/"),
         art("能源消费结构年度统计","趋势分析基础","https://data.stats.gov.cn/")
       ]},
-      {name:"彭博新能源财经 BNEF",url:"https://about.bnef.com/",type:"网站（国际）",desc:"全球能源研究权威机构，天然气/LNG市场分析、能源转型研究",articles:[
+      {name:"彭博新能源财经 BNEF",url:"https://about.bnef.com/",type:"网站（国际）",desc:"全球能源研究权威机构，天然气/LNG市场分析、能源转型研究。",articles:[
         art("Global LNG Outlook","全球LNG市场展望","https://about.bnef.com/"),
         art("China Gas Demand Forecast","中国天然气需求预测","https://about.bnef.com/")
       ]},
-      {name:"国际能源署 IEA",url:"https://www.iea.org/",type:"网站（国际）",desc:"发布《World Energy Outlook》《Gas Market Report》等全球能源天然气权威报告",articles:[
+      {name:"国际能源署 IEA",url:"https://www.iea.org/",type:"网站（国际）",desc:"发布《World Energy Outlook》《Gas Market Report》等全球能源天然气权威报告。",articles:[
         art("Gas Market Report Q3 2026","季度天然气市场报告","https://www.iea.org/"),
         art("World Energy Outlook","年度全球能源展望","https://www.iea.org/")
       ]}
     ]}
   ],
 
+  // 精选12篇重大热点（过滤区域性小事件）
   hotArticles: [
-    {topic:"关于我市2026年7月份非居民用天然气销",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704428.shtml"},
-    {topic:"关于安远县液化石油气充装站标准化扩容",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704384.shtml"},
-    {topic:"关于江门市区及开平市、鹤山市的非居民",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704383.shtml"},
-    {topic:"关于征求《嘉峪关市燃气设施保护管理办",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704348.shtml"},
-    {topic:"中船大连造船第二代LNG运输船“海能”",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704346.shtml"},
-    {topic:"关于安远县液化石油气充装站标准化扩容扩建提升建设",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704384.shtml"},
-    {topic:"关于征求《嘉峪关市燃气设施保护管理办法（征求意见",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704348.shtml"},
-    {topic:"中船大连造船第二代LNG运输船“海能”轮命名交付",summary:"最新资讯，来自国际燃气网",source:"国际燃气网",date:"2026-07-31",url:"https://gas.in-en.com/html/gas-3704346.shtml"}
+    {topic:"煤层气增储上产行动方案发布",summary:"国家能源局印发《鄂尔多斯盆地东部区域煤层气增储上产行动方案（2026—2030年）》，明确煤层气开发目标",source:"国家能源局",date:"2026-07-27",url:"https://www.nea.gov.cn/"},
+    {topic:"「十五五」新型能源体系规划出台",summary:"《新型能源体系建设「十五五」规划》正式发布，首次系统性明确天然气在新型能源体系中的战略定位",source:"国家发改委/能源局",date:"2026-06-25",url:"https://www.nea.gov.cn/"},
+    {topic:"第二代国产LNG运输船「海能」轮交付",summary:"中船大连造船建造的第二代LNG运输船命名交付，标志中国大型LNG船自主建造能力迈入新阶段",source:"国际燃气网",date:"2026-07-24",url:"https://gas.in-en.com/html/gas-3704346.shtml"},
+    {topic:"西南油气田页岩气投产井突破2000口",summary:"中国石油西南油气田页岩气投产井数突破2000口，我国超深层页岩气田诞生",source:"中石油/国际燃气网",date:"2026-05-14",url:"https://gas.in-en.com/"},
+    {topic:"可再生能源发展「十五五」规划发布",summary:"国家发改委、国家能源局联合印发规划，提出可再生能源消费最低比重目标，天然气调峰地位进一步明确",source:"国家能源局",date:"2026-07-23",url:"https://www.nea.gov.cn/"},
+    {topic:"湖北白浒山LNG储配基地桩基完工",summary:"304根桩基施工完成，标志华中地区最大LNG储配基地进入主体施工阶段",source:"国际燃气网",date:"2026-07-17",url:"https://gas.in-en.com/html/gas-3704250.shtml"},
+    {topic:"浙江首票保税LNG跨关区加注业务落地",summary:"全国首票保税LNG跨关区加注在浙江成功落地，为国际船舶LNG加注提供政策创新范本",source:"国际燃气网",date:"2026-07-09",url:"https://gas.in-en.com/html/gas-3704004.shtml"},
+    {topic:"低空经济赋能天然气管道数字化巡检",summary:"江西省能源局推荐「低空经济赋能天然气管道数字化巡检」项目，AI+无人机巡检成为管网运维新趋势",source:"国际燃气网",date:"2026-07-17",url:"https://gas.in-en.com/html/gas-3704290.shtml"},
+    {topic:"欧盟LNG进口创历史新高",summary:"欧盟从俄罗斯最大工厂进口液化天然气数量创历史新高，全球天然气贸易格局深刻调整",source:"国际燃气网",date:"2026-07-08",url:"https://gas.in-en.com/"},
+    {topic:"国家管网北方管道五大举措保供",summary:"国家管网集团北方管道公司发布迎峰度夏五大保供举措，全力保障京津冀天然气供应安全",source:"国家管网集团",date:"2026-06-26",url:"https://www.pipechina.com.cn/"},
+    {topic:"能源领域节能降碳行动计划出台",summary:"国家能源局印发《能源领域节能降碳行动计划（2026—2028年）》，明确天然气高效利用路径",source:"国家能源局",date:"2026-07-10",url:"https://www.nea.gov.cn/"},
+    {topic:"中俄东线天然气管道运营稳步增长",summary:"中俄东线天然气管道年度输气量持续攀升，已成为中国东北及华北地区重要气源通道",source:"中石油/国家管网",date:"2026-07",url:"https://news.cnpc.com.cn/"}
+  ],
+
+  // 更多历史热点文章（点击"更多信息"展示）
+  historyArticles: [
+    {topic:"国内单套最大含硫天然气净化厂完成首检",summary:"国内单套处理规模最大的含硫天然气净化厂顺利完成首次大修检验，高含硫天然气处理技术持续突破",source:"国际燃气网",date:"2026-07-17",url:"https://gas.in-en.com/"},
+    {topic:"江苏省LNG接收站集群效应显现",summary:"江苏华电赣榆LNG接收站加速建设，与如东、滨海等接收站形成沿海LNG接收集群",source:"国际燃气网",date:"2026-07-24",url:"https://gas.in-en.com/html/gas-3704252.shtml"},
+    {topic:"贵州省页岩气勘探区块公开招标",summary:"贵州省能源局发布2026-2030年页岩气勘探区块招标公告，矿权市场化迈出实质一步",source:"国际燃气网",date:"2026-06-23",url:"https://gas.in-en.com/"},
+    {topic:"中国油气勘探开发发展报告（2026）发布",summary:"国家能源局发布年度油气勘探开发报告，系统总结国内油气增储上产成效",source:"国家能源局",date:"2026-07-21",url:"https://www.nea.gov.cn/"},
+    {topic:"中国海油大湾区保供方案全面落地",summary:"中国海油发布粤港澳大湾区能源保供方案，南海天然气+进口LNG双气源保障",source:"中国海油",date:"2026-07",url:"https://www.cnooc.com.cn/"},
+    {topic:"中集安瑞科贵州钢焦一体化LNG项目投产",summary:"中集安瑞科在贵州六盘水投资建设的LNG综合利用标杆项目成功投产",source:"国际燃气网",date:"2026-07-24",url:"https://gas.in-en.com/html/gas-3704253.shtml"},
+    {topic:"卡塔尔能源LNG供应不可抗力条款引关注",summary:"卡塔尔能源公司准备将LNG供应的不可抗力条款纳入新合同，全球LNG长协定价机制面临调整",source:"国际燃气网",date:"2026-07-23",url:"https://gas.in-en.com/"},
+    {topic:"全国LNG接收站接收能力突破亿吨",summary:"随着多个LNG接收站密集投产，中国LNG年接收能力正式突破1亿吨大关",source:"国家管网/国际燃气网",date:"2026-06",url:"https://gas.in-en.com/"}
   ]
 };
 
-// ===== Render =====
+// Render
 function renderMain() {
-  const main = document.getElementById('main-content');
+  const m = document.getElementById('main-content');
   const d = DATA;
   let h = '';
 
@@ -368,27 +392,32 @@ function renderMain() {
   h += `<section class="hero" id="overview">
     <h2>能源天然气知识库</h2>
     <p>专业知识 · 行业平台 · 政务新媒体 · 热点文章</p>
-    <div class="badge">📡 数据源：国家能源局 · 国际燃气网 | 自动刷新时间：2026-07-31 09:38 | 含超链接可直接跳转原文</div>
+    <div class="badge">📡 数据源：国家能源局 · 国际燃气网 | 实时更新 | 含超链接可直接跳转原文</div>
     <div class="stats">
       <div class="stat-item"><div class="stat-num">${d.knowledge.length}</div><div class="stat-label">知识模块</div></div>
-      <div class="stat-item"><div class="stat-num">${d.platforms.reduce((s,c) => s + c.entries.length, 0)}</div><div class="stat-label">收录平台</div></div>
+      <div class="stat-item"><div class="stat-num">${d.platforms.reduce((s,c)=>s+c.entries.length,0)}</div><div class="stat-label">收录平台</div></div>
       <div class="stat-item"><div class="stat-num">${d.hotArticles.length}</div><div class="stat-label">热点文章</div></div>
       <div class="stat-item"><div class="stat-num">${d.platforms.length}</div><div class="stat-label">平台分类</div></div>
     </div>
   </section>`;
 
-  // Overview
   h += `<div class="overview-block"><p style="color:#9aafc4;font-size:14px;line-height:1.8;">${d.overview}</p></div>`;
 
-  // Knowledge sections
+  // Knowledge
   d.knowledge.forEach(sec => {
     h += `<section class="section" id="${sec.id}"><div class="section-title">${sec.title}</div><div class="knowledge-grid">`;
     sec.items.forEach(item => {
       let content = item.content;
-      if (item.url) {
-        content += ` <a href="${item.url}" target="_blank" title="查看原文" style="font-size:11px;">🔗</a>`;
+      if (item.url) content += ` <a href="${item.url}" target="_blank" title="查看原文" style="font-size:11px;">🔗</a>`;
+      let tagsHtml = '';
+      if (item.companies) {
+        tagsHtml = '<div class="company-tags">';
+        item.companies.forEach(co => {
+          tagsHtml += `<span class="company-tag">${co.url ? `<a href="${co.url}" target="_blank">${co.name}</a>` : co.name}<span style="color:#5f7d9c;margin-left:4px;font-size:10px;">${co.desc}</span></span>`;
+        });
+        tagsHtml += '</div>';
       }
-      h += `<div class="knowledge-item"><div class="klabel">${item.label}</div><div class="kcontent">${content}</div></div>`;
+      h += `<div class="knowledge-item"><div class="klabel">${item.label}</div><div class="kcontent">${content}</div>${tagsHtml}</div>`;
     });
     h += `</div></section>`;
   });
@@ -398,81 +427,60 @@ function renderMain() {
   d.platforms.forEach(cat => {
     h += `<div class="platform-category" id="${cat.id}"><h3>${cat.category}</h3><div class="platform-grid">`;
     cat.entries.forEach(entry => {
-      const isWechat = entry.type === '微信公众号';
-      h += `<div class="platform-card">
-        <div class="pheader">
-          <div class="pname">${entry.name}</div>
-          <div class="ptype${isWechat ? ' wechat' : ''}">${entry.type}</div>
-        </div>`;
-      if (entry.url) {
-        h += `<div class="purl">🔗 <a href="${entry.url}" target="_blank">${entry.url}</a></div>`;
-      } else {
-        h += `<div class="purl" style="color:#4a627a;">📱 微信公众号（请在微信内搜索关注）</div>`;
-      }
+      const isWx = entry.type === '微信公众号';
+      h += `<div class="platform-card"><div class="pheader"><div class="pname">${entry.name}</div><div class="ptype${isWx?' wechat':''}">${entry.type}</div></div>`;
+      if (entry.url) h += `<div class="purl">🔗 <a href="${entry.url}" target="_blank">${entry.url}</a></div>`;
+      else h += `<div class="purl" style="color:#4a627a;">📱 微信公众号（搜一搜关注 / 点击文章链接跳转）</div>`;
       h += `<div class="pdesc">${entry.desc}</div><div class="particles">`;
-      if (entry.articles) {
-        entry.articles.forEach(a => {
-          if (a.url) {
-            h += `<div class="particle">
-              <a href="${a.url}" target="_blank">${a.title} <span class="ext-link">↗</span></a>
-              <span class="note">${a.note}</span>
-            </div>`;
-          } else {
-            h += `<div class="particle">
-              <strong style="color:#c8d6e5;">${a.title}</strong>
-              <span class="note">${a.note}</span>
-            </div>`;
-          }
-        });
-      }
+      if (entry.articles) entry.articles.forEach(a => {
+        if (a.url) h += `<div class="particle"><a href="${a.url}" target="_blank">${a.title} <span class="ext-link">↗</span></a><span class="note">${a.note}</span></div>`;
+        else h += `<div class="particle"><strong style="color:#c8d6e5;">${a.title}</strong><span class="note">${a.note}</span></div>`;
+      });
       h += `</div></div>`;
     });
     h += `</div></div>`;
   });
   h += `</section>`;
 
-  // Hot Articles
+  // Hot Articles (12 main)
   h += `<section class="section" id="hot-articles">
-    <div class="section-title">🔥 近期热点文章汇总</div>
+    <div class="section-title">🔥 近期重大热点文章（精选12篇）</div>
     <div class="hot-grid">`;
   d.hotArticles.forEach(item => {
-    h += `<div class="hot-card">
-      <div class="hdate">📅 ${item.date}</div>
-      <div class="htitle">${item.url ? `<a href="${item.url}" target="_blank">${item.topic} ↗</a>` : item.topic}</div>
-      <div class="hdesc">${item.summary}</div>
-      <span class="hsource">📌 ${item.source}</span>
-      ${item.url ? `<a class="hlink" href="${item.url}" target="_blank">查看原文 →</a>` : ''}
-    </div>`;
+    h += `<div class="hot-card"><div class="hdate">📅 ${item.date}</div><div class="htitle">${item.url?`<a href="${item.url}" target="_blank">${item.topic} ↗</a>`:item.topic}</div><div class="hdesc">${item.summary}</div><span class="hsource">📌 ${item.source}</span>${item.url?`<a class="hlink" href="${item.url}" target="_blank">查看原文 →</a>`:''}</div>`;
   });
-  h += `</div></section>`;
+  h += `</div>
+    <div class="more-wrap"><button class="more-btn" id="moreBtn" onclick="toggleHistory()">更多信息（${d.historyArticles.length}篇历史热点）</button></div>
+    <div class="history-section" id="historySection">
+      <div class="section-title">📚 历史热点文章</div>
+      <div class="hot-grid">`;
+  d.historyArticles.forEach(item => {
+    h += `<div class="hot-card"><div class="hdate">📅 ${item.date}</div><div class="htitle">${item.url?`<a href="${item.url}" target="_blank">${item.topic} ↗</a>`:item.topic}</div><div class="hdesc">${item.summary}</div><span class="hsource">📌 ${item.source}</span>${item.url?`<a class="hlink" href="${item.url}" target="_blank">查看原文 →</a>`:''}</div>`;
+  });
+  h += `</div></div></section>`;
 
-  main.innerHTML = h;
+  m.innerHTML = h;
 }
 
-// ===== Navigation =====
+function toggleHistory() {
+  const sec = document.getElementById('historySection');
+  const btn = document.getElementById('moreBtn');
+  sec.classList.toggle('show');
+  btn.classList.toggle('open');
+  btn.textContent = sec.classList.contains('show') ? '收起历史热点 ▴' : `更多信息（${DATA.historyArticles.length}篇历史热点） ▾`;
+}
+
 function initNav() {
   document.getElementById('nav').addEventListener('click', e => {
     const item = e.target.closest('.nav-item');
     if (!item) return;
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
     item.classList.add('active');
   });
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        document.querySelectorAll('.nav-item').forEach(i => {
-          i.classList.toggle('active', i.dataset.section === entry.target.id);
-        });
-      }
-    });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if(entry.isIntersecting) document.querySelectorAll('.nav-item').forEach(i=>i.classList.toggle('active', i.dataset.section===entry.target.id)); });
   }, { rootMargin: '-20% 0px -70% 0px' });
-
-  setTimeout(() => {
-    document.querySelectorAll('.section, .hero, .platform-category').forEach(el => {
-      if (el.id) observer.observe(el);
-    });
-  }, 100);
+  setTimeout(() => { document.querySelectorAll('.section,.hero,.platform-category').forEach(el=>{if(el.id)obs.observe(el)}); }, 100);
 }
 
 renderMain();
