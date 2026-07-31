@@ -44,7 +44,8 @@ a:hover{color:#00ffcc;text-decoration:underline}
 .section-title::before{content:'';width:4px;height:24px;background:linear-gradient(180deg,#00d4ff,#0066ff);border-radius:2px}
 
 .knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
-.knowledge-item{background:rgba(0,20,40,.6);border:1px solid rgba(0,212,255,.08);border-radius:12px;padding:20px;transition:all .3s}
+.knowledge-item{background:rgba(0,20,40,.6);border:1px solid rgba(0,212,255,.08);border-radius:12px;padding:20px;transition:all .3s;display:flex;flex-direction:column}
+.knowledge-item .kbody{flex:1}
 .knowledge-item:hover{border-color:rgba(0,212,255,.25);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,100,255,.1)}
 .knowledge-item .klabel{font-size:13px;color:#00d4ff;font-weight:600;margin-bottom:10px}
 .knowledge-item .kcontent{font-size:14px;color:#9aafc4;line-height:1.7}
@@ -357,7 +358,7 @@ function renderMain(){
         });
         cohtml+='</div>';
       }
-      h+=`<div class="knowledge-item"><div class="klabel">${item.label}</div><div class="kcontent">${content}</div>${cohtml}</div>`;
+      h+=`<div class="knowledge-item"><div class="kbody"><div class="klabel">${item.label}</div><div class="kcontent">${content}</div></div>${cohtml}</div>`;
     });
     h+=`</div></section>`;
   });
