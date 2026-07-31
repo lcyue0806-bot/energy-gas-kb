@@ -50,8 +50,72 @@ def generate_hot_articles_html(articles):
     
     return '\n'.join(html_parts)
 
+def extract_js_array(html, array_name):
+    """从 JavaScript 中提取数组"""
+    pattern = array_name + r':\s*\[(.*?)\]\s*,\s*\n'
+    match = re.search(pattern, html, re.DOTALL)
+    if match:
+        return match.group(1)
+    return ''
+
+def parse_articles_from_js(js_text):
+    """解析 JS 文章数组为 Python 列表"""
+    articles = []
+    # 匹配每个 {topic:"...",summary:"...",source:"...",date:"...",url:"..."}
+    pattern = r'\{topic:"(.*?)",summary:"(.*?)",source:"(.*?)",date:"(.*?)",url:"(.*?)"\}'
+    for m in re.finditer(pattern, js_text):
+        articles.append({
+            'topic': m.group(1),
+            'summary': m.group(2),
+            'source': m.group(3),
+            'date': m.group(4),
+            'url': m.group(5)
+        })
+    return articles
+
+def articles_to_js(articles, indent=4):
+    """将文章列表转为 JS 数组字符串"""
+    lines = []
+    for a in articles:
+        t = a['topic'].replace('"', '\\"').replace("'", "\\'")
+        s = a['summary'].replace('"', '\\"').replace("'", "\\'")
+        src = a['source']
+        d = a['date']
+        u = a.get('url', '')
+        prefix = ' ' * indent
+        lines.append(f'{prefix}{{topic:"{t}",summary:"{s}",source:"{src}",date:"{d}",url:"{u}"}}')
+    return '[\n' + ',\n'.join(lines) + '\n  ]'
+
+# 重大事件关键词（用于筛选）
+MAJOR_KEYWORDS = [
+    '行动方案', '规划', '政策', '国家能源局', '发改', '十五五',
+    '投产', '交付', '命名', '突破', '首创', '首票', '首家',
+    '里程碑', '创新高', '创历史', '正式', '出台', '发布',
+    'LNG船', '接收站', '页岩气', '煤层气', '管网', '管道',
+    '保供', '增储', '招标', '区块', '碳中和', '碳达峰',
+    '国际', '全球', '进口', '出口', '格局',
+]
+
+def is_major_event(article):
+    """判断是否为重大事件"""
+    text = article.get('title', '') + article.get('topic', '')
+    # 排除纯地区性小事件
+    exclude_patterns = [
+        r'关于.{2,8}市.{2,8}的通知', r'关于.{2,8}县', r'关于.{2,8}区',
+        r'销售价格', r'阶梯气价', r'统计数据表',
+        r'非居民用天然气销售价格',
+    ]
+    for p in exclude_patterns:
+        if re.search(p, text):
+            return False
+    # 匹配重大关键词
+    for kw in MAJOR_KEYWORDS:
+        if kw in text:
+            return True
+    return False
+
 def update_index_html(news_data):
-    """更新 index.html 中的热点文章和历史数据"""
+    """更新 index.html - 智能合并热点文章（旧文章自动归档到历史）"""
     if not os.path.exists(INDEX_FILE):
         print("❌ 未找到 index.html")
         return False
@@ -59,60 +123,74 @@ def update_index_html(news_data):
     with open(INDEX_FILE, 'r', encoding='utf-8') as f:
         html = f.read()
     
-    # 1. 更新 "数据更新" 时间戳
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
+    today = datetime.now().strftime('%Y-%m-%d')
+    
+    # 1. 更新时间戳
+    html = re.sub(r'数据更新：\d{4}-\d{2}-\d{2}.*?<br>', f'数据更新：{today}<br>', html)
+    
+    # 2. 提取当前热点和历史文章
+    hot_js = extract_js_array(html, 'hotArticles')
+    hist_js = extract_js_array(html, 'historyArticles')
+    
+    current_hot = parse_articles_from_js(hot_js)
+    current_hist = parse_articles_from_js(hist_js) if hist_js else []
+    
+    print(f"  当前热点: {len(current_hot)} 篇 | 历史: {len(current_hist)} 篇")
+    
+    # 3. 从爬虫数据筛选重大事件
+    raw_articles = news_data.get('articles', [])
+    new_major = []
+    for a in raw_articles:
+        if is_major_event(a):
+            title = a.get('title', '')[:50]
+            # 避免与现有热点重复
+            if not any(title[:20] in h.get('topic', '') for h in current_hot):
+                new_major.append({
+                    'topic': title,
+                    'summary': f"最新资讯，来自{a['source']}",
+                    'source': a['source'],
+                    'date': today,
+                    'url': a.get('url', '')
+                })
+    
+    print(f"  新重大事件: {len(new_major)} 篇（已去重）")
+    
+    # 4. 合并：新文章放在前面，旧文章跟在后面
+    merged_hot = new_major + current_hot
+    # 去重、去空
+    seen = set()
+    unique_hot = []
+    for a in merged_hot:
+        key = a['topic'][:30]
+        if key and key not in seen:
+            seen.add(key)
+            unique_hot.append(a)
+    
+    # 5. 热点保持12篇，多余的移到历史
+    new_hot = unique_hot[:12]
+    displaced = unique_hot[12:]
+    
+    # 被替换的旧文章 + 新溢出的 → 加到历史前面
+    new_hist = displaced + current_hist
+    # 历史最多保留 30 篇
+    new_hist = new_hist[:30]
+    
+    print(f"  新热点: {len(new_hot)} 篇 | 新历史: {len(new_hist)} 篇 | 归档: {len(displaced)} 篇")
+    
+    # 6. 替换 HTML 中的两个数组
     html = re.sub(
-        r'数据更新：\d{4}-\d{2}-\d{2}',
-        f'数据更新：{now}（自动刷新）',
-        html
-    )
-    html = re.sub(
-        r'验证时间：\d{4}-\d{2}-\d{2}',
-        f'自动刷新时间：{now}',
-        html
+        r'hotArticles:\s*\[.*?\],\s*\n',
+        'hotArticles:\n  ' + articles_to_js(new_hot) + ',\n',
+        html, flags=re.DOTALL
     )
     
-    # 2. 替换 Hot Articles 数据（JavaScript DATA.hotArticles）
-    articles = news_data.get('articles', [])
-    hot_js = []
-    for a in articles[:8]:
-        title = a['title'].replace("'", "\\'").replace('"', '\\"')
-        source = a['source']
-        url = a.get('url', '')
-        date_str = datetime.now().strftime('%Y-%m-%d')
-        
-        hot_js.append(
-            '    {topic:"' + title[:50] + '",'
-            'summary:"最新资讯，来自' + source + '",'
-            'source:"' + source + '",'
-            'date:"' + date_str + '",'
-            'url:"' + url + '"}'
+    if new_hist:
+        html = re.sub(
+            r'historyArticles:\s*\[.*?\],?\s*\n',
+            'historyArticles:\n  ' + articles_to_js(new_hist) + ',\n',
+            html, flags=re.DOTALL
         )
-    
-    new_hot_articles = ',\n'.join(hot_js)
-    
-    # 替换 hotArticles 数组
-    html = re.sub(
-        r'hotArticles:\s*\[.*?\]',
-        'hotArticles: [\n' + new_hot_articles + '\n  ]',
-        html,
-        flags=re.DOTALL
-    )
-    
-    # 3. 替换 Updated badge
-    total_articles = news_data.get('total_articles', 0)
-    html = re.sub(
-        r'共抓取 \d+ 篇最新文章',
-        f'共抓取 {total_articles} 篇最新文章',
-        html
-    )
-    
-    # 4. 更新时间戳
-    html = re.sub(
-        r'const lastUpdate = ".*?"',
-        f'const lastUpdate = "{now}"',
-        html
-    )
     
     with open(INDEX_FILE, 'w', encoding='utf-8') as f:
         f.write(html)
