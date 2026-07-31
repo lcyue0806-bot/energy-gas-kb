@@ -139,9 +139,19 @@ def git_push():
     )
     print(f"  git commit: {result.stdout.strip()} {result.stderr.strip()}")
     
-    # 推送
+    # 先从远程拉取最新代码（rebase 避免合并提交）
     env = os.environ.copy()
     env['GIT_SSL_NO_VERIFY'] = '1'
+    pull_result = subprocess.run(
+        ['git', '-c', 'http.sslVerify=false', 'pull', '--rebase', GIT_REPO, 'master'],
+        capture_output=True, text=True, timeout=60, env=env
+    )
+    if pull_result.returncode == 0:
+        print(f"  git pull (rebase): OK")
+    else:
+        print(f"  git pull warning: {pull_result.stderr[:100]}")
+
+    # 推送
     result = subprocess.run(
         ['git', '-c', 'http.sslVerify=false', 'push', GIT_REPO, 'master'],
         capture_output=True, text=True, timeout=120, env=env
