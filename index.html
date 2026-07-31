@@ -108,7 +108,10 @@ a:hover{color:#00ffcc;text-decoration:underline}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,.2);border-radius:3px}
 
-@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;max-width:100vw;padding:20px 16px}.platform-grid,.knowledge-grid,.hot-grid{grid-template-columns:1fr}.hero h2{font-size:26px}}
+/* 产业链专区：固定三列等高 */
+#chain .knowledge-grid{grid-template-columns:repeat(3,1fr)}
+#chain .knowledge-item{height:100%}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;max-width:100vw;padding:20px 16px}.platform-grid,.knowledge-grid,.hot-grid{grid-template-columns:1fr}#chain .knowledge-grid{grid-template-columns:1fr}.hero h2{font-size:26px}}
 </style>
 </head>
 <body>
