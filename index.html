@@ -111,13 +111,63 @@ a:hover{color:#00ffcc;text-decoration:underline}
 /* 产业链专区：固定三列等高 */
 #chain .knowledge-grid{grid-template-columns:repeat(3,1fr)}
 #chain .knowledge-item{height:100%}
-@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;max-width:100vw;padding:20px 16px}.platform-grid,.knowledge-grid,.hot-grid{grid-template-columns:1fr}#chain .knowledge-grid{grid-template-columns:1fr}.hero h2{font-size:26px}}
+.search-bar{position:fixed;top:20px;right:28px;z-index:100;display:flex;align-items:center;gap:6px}
+.search-wrap{position:relative}
+.search-input{
+  width:260px;padding:10px 40px 10px 16px;border-radius:24px;
+  background:rgba(15,23,42,.9);border:1px solid rgba(0,212,255,.25);
+  color:#fff;font-size:13px;outline:none;backdrop-filter:blur(10px);
+  transition:all .3s;
+}
+.search-input:focus{border-color:#00d4ff;box-shadow:0 0 16px rgba(0,212,255,.2);width:320px}
+.search-input::placeholder{color:#4a627a}
+.search-icon{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:#4a627a;cursor:pointer;font-size:16px;
+  padding:4px;
+}
+.search-icon:hover{color:#00d4ff}
+.search-mode{
+  padding:10px 14px;border-radius:24px;background:rgba(15,23,42,.9);
+  border:1px solid rgba(0,212,255,.15);color:#8a9bb5;font-size:12px;
+  cursor:pointer;backdrop-filter:blur(10px);transition:all .2s;white-space:nowrap;
+}
+.search-mode:hover{border-color:#00d4ff;color:#00d4ff}
+.search-mode.active{background:rgba(0,212,255,.12);border-color:#00d4ff;color:#00d4ff}
+.search-results{
+  position:absolute;top:100%;left:0;right:0;margin-top:8px;
+  background:rgba(10,14,23,.97);border:1px solid rgba(0,212,255,.15);
+  border-radius:14px;max-height:360px;overflow-y:auto;display:none;
+  backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,.5);
+}
+.search-results.show{display:block}
+.search-result-item{
+  padding:12px 16px;border-bottom:1px solid rgba(0,212,255,.06);
+  cursor:pointer;transition:all .15s;font-size:13px;color:#9aafc4;
+}
+.search-result-item:hover{background:rgba(0,212,255,.06);color:#fff}
+.search-result-item .match{color:#00ffcc;font-weight:600}
+.search-result-item .ctx{font-size:11px;color:#5f7d9c;margin-top:2px}
+.search-result-empty{padding:20px;text-align:center;color:#5f7d9c;font-size:13px}
+.search-result-empty a{color:#00d4ff}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;max-width:100vw;padding:20px 16px}.platform-grid,.knowledge-grid,.hot-grid{grid-template-columns:1fr}#chain .knowledge-grid{grid-template-columns:1fr}.hero h2{font-size:26px}.search-bar{top:8px;right:8px}.search-input{width:140px}.search-input:focus{width:180px}}
 </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 <div class="app">
 <aside class="sidebar">
+
+<!-- 搜索栏 -->
+<div class="search-bar">
+  <button class="search-mode active" id="modeLocal" onclick="setMode('local')">📄 本站</button>
+  <button class="search-mode" id="modeWeb" onclick="setMode('web')">🌐 全网</button>
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" placeholder="搜索天然气相关知识…" oninput="doSearch()" onfocus="doSearch()">
+    <button class="search-icon" onclick="doSearch()">🔍</button>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
   <div class="sidebar-logo">
     <svg width="64" height="64" viewBox="0 0 64 64">
       <defs>
@@ -416,6 +466,84 @@ function initNav(){
 }
 
 renderMain();initNav();
+
+// ===== 搜索功能 =====
+let searchMode = 'local';
+
+function setMode(mode) {
+  searchMode = mode;
+  document.getElementById('modeLocal').classList.toggle('active', mode === 'local');
+  document.getElementById('modeWeb').classList.toggle('active', mode === 'web');
+  document.getElementById('searchInput').placeholder = mode === 'local' ? '搜索本站内容…' : '全网搜索天然气资讯…';
+  doSearch();
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  const results = document.getElementById('searchResults');
+  
+  if (!q) { results.classList.remove('show'); return; }
+  
+  if (searchMode === 'web') {
+    // 全网搜索：打开新窗口搜索
+    const webQuery = encodeURIComponent('天然气 ' + q);
+    results.innerHTML = `<div class="search-result-empty">
+      按 Enter 在浏览器搜索「天然气 ${q}」<br><br>
+      <a href="https://cn.bing.com/search?q=${webQuery}" target="_blank">🔍 Bing 搜索</a> &nbsp;
+      <a href="https://www.baidu.com/s?wd=${webQuery}" target="_blank">🔍 百度搜索</a>
+    </div>`;
+    results.classList.add('show');
+    return;
+  }
+  
+  // 本站搜索
+  const main = document.getElementById('main-content');
+  const text = main.innerText;
+  const lines = text.split('\n').filter(l => l.trim());
+  
+  const matches = [];
+  const qlower = q.toLowerCase();
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.toLowerCase().includes(qlower) && line.length > 4) {
+      // 获取上下文
+      const ctx = [lines[Math.max(0,i-1)], line, lines[Math.min(lines.length-1,i+1)]].join(' · ').substring(0, 120);
+      matches.push({ line: line.substring(0, 80), ctx });
+    }
+  }
+  
+  if (matches.length === 0) {
+    results.innerHTML = `<div class="search-result-empty">本站未找到「${q}」<br><br><a href="#" onclick="setMode('web');document.getElementById('searchInput').focus()">切换到全网搜索 →</a></div>`;
+  } else {
+    const unique = matches.slice(0, 15).filter((m, i, arr) => arr.findIndex(x => x.line === m.line) === i);
+    results.innerHTML = unique.map(m => {
+      const hl = m.line.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<span class="match">$1</span>');
+      return `<div class="search-result-item" onclick="navigator.clipboard.writeText('${m.line.replace(/'/g,"\\'")}')"><div>${hl}</div><div class="ctx">${m.ctx}</div></div>`;
+    }).join('');
+  }
+  results.classList.add('show');
+}
+
+// 输入框回车 → 全网搜索
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const q = this.value.trim();
+    if (!q) return;
+    if (searchMode === 'local') {
+      setMode('web');
+    }
+    const webQuery = encodeURIComponent('天然气 ' + q);
+    window.open('https://cn.bing.com/search?q=' + webQuery, '_blank');
+  }
+});
+
+// 点击其他地方关闭搜索结果
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrap') && !e.target.closest('.search-mode')) {
+    document.getElementById('searchResults').classList.remove('show');
+  }
+});
 </script>
 </body>
 </html>
