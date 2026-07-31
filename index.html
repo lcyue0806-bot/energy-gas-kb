@@ -111,15 +111,15 @@ a:hover{color:#00ffcc;text-decoration:underline}
 /* 产业链专区：固定三列等高 */
 #chain .knowledge-grid{grid-template-columns:repeat(3,1fr)}
 #chain .knowledge-item{height:100%}
-.search-bar{position:fixed;top:20px;right:28px;z-index:100;display:flex;align-items:center;gap:6px}
+.search-bar{position:fixed;top:18px;right:28px;z-index:100;display:inline-flex;align-items:center;gap:8px;background:rgba(10,14,23,.92);border:1px solid rgba(0,212,255,.15);border-radius:28px;padding:6px 8px;backdrop-filter:blur(12px)}
 .search-wrap{position:relative}
 .search-input{
-  width:260px;padding:10px 40px 10px 16px;border-radius:24px;
-  background:rgba(15,23,42,.9);border:1px solid rgba(0,212,255,.25);
-  color:#fff;font-size:13px;outline:none;backdrop-filter:blur(10px);
+  width:220px;padding:7px 36px 7px 14px;border-radius:20px;
+  background:rgba(0,20,40,.8);border:1px solid rgba(0,212,255,.15);
+  color:#fff;font-size:13px;outline:none;
   transition:all .3s;
 }
-.search-input:focus{border-color:#00d4ff;box-shadow:0 0 16px rgba(0,212,255,.2);width:320px}
+.search-input:focus{border-color:#00d4ff;box-shadow:0 0 12px rgba(0,212,255,.15);width:280px}
 .search-input::placeholder{color:#4a627a}
 .search-icon{
   position:absolute;right:12px;top:50%;transform:translateY(-50%);
@@ -128,12 +128,12 @@ a:hover{color:#00ffcc;text-decoration:underline}
 }
 .search-icon:hover{color:#00d4ff}
 .search-mode{
-  padding:10px 14px;border-radius:24px;background:rgba(15,23,42,.9);
-  border:1px solid rgba(0,212,255,.15);color:#8a9bb5;font-size:12px;
-  cursor:pointer;backdrop-filter:blur(10px);transition:all .2s;white-space:nowrap;
+  padding:7px 12px;border-radius:18px;background:transparent;
+  border:1px solid transparent;color:#8a9bb5;font-size:12px;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
 }
-.search-mode:hover{border-color:#00d4ff;color:#00d4ff}
-.search-mode.active{background:rgba(0,212,255,.12);border-color:#00d4ff;color:#00d4ff}
+.search-mode:hover{border-color:rgba(0,212,255,.2);color:#00d4ff}
+.search-mode.active{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.3);color:#00d4ff}
 .search-results{
   position:absolute;top:100%;left:0;right:0;margin-top:8px;
   background:rgba(10,14,23,.97);border:1px solid rgba(0,212,255,.15);
@@ -150,7 +150,7 @@ a:hover{color:#00ffcc;text-decoration:underline}
 .search-result-item .ctx{font-size:11px;color:#5f7d9c;margin-top:2px}
 .search-result-empty{padding:20px;text-align:center;color:#5f7d9c;font-size:13px}
 .search-result-empty a{color:#00d4ff}
-@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;max-width:100vw;padding:20px 16px}.platform-grid,.knowledge-grid,.hot-grid{grid-template-columns:1fr}#chain .knowledge-grid{grid-template-columns:1fr}.hero h2{font-size:26px}.search-bar{top:8px;right:8px}.search-input{width:140px}.search-input:focus{width:180px}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;max-width:100vw;padding:60px 16px 20px}.platform-grid,.knowledge-grid,.hot-grid{grid-template-columns:1fr}#chain .knowledge-grid{grid-template-columns:1fr}.hero h2{font-size:26px}.search-bar{top:8px;right:8px;padding:4px 6px;gap:4px}.search-input{width:120px}.search-input:focus{width:150px}.search-mode{font-size:11px;padding:5px 8px}}
 </style>
 </head>
 <body>
